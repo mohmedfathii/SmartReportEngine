@@ -9,18 +9,20 @@ namespace SmartReportEngine.API.Controllers;
 public class TestController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get(string testName = "Hemoglobin", double value = 8)
     {
         var test = new LabTestResult
         {
-            TestName = "Hemoglobin",
-            Value = 8,
+            TestName = testName,
+            Value = value,
             MinRange = 12,
             MaxRange = 16
         };
 
-        var analyzer = new LabTestAnalyzer();
-        analyzer.Analyze(test);
+        var factory = new LabTestStrategyFactory();
+        var strategy = factory.GetStrategy(test.TestName);
+
+        strategy.Analyze(test);
 
         return Ok(new
         {
